@@ -22,6 +22,8 @@ included by every SGL header by default:
 
 * `<assert.h>`
 
+* `<iso646.h>`
+
 * `<stdbool.h>`
 
 * `<stdalign.h>`
