@@ -30,6 +30,8 @@ included by every SGL header by default:
 
 * `<stddef.h>`
 
+* `<stdnoreturn.h>`
+
 Documentation
 ---
 

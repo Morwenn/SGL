@@ -26,5 +26,6 @@
 #include <stdalign.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdnoreturn.h>
 
 #endif // SGL_DETAIL_COMMON_H_
