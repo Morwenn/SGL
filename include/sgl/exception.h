@@ -101,7 +101,7 @@ const char* sgl_what(sgl_exception_t exception);
  * Beginning of an exception try bloc.
  */
 #define sgl_try                                                                                                 \
-    {                                                                                                           \
+    do {                                                                                                           \
         ++sgl_detail_exceptions_index;                                                                          \
         sgl_exception_t sgl_detail_exception_error = setjmp(sgl_detail_buf_array[sgl_detail_exceptions_index]); \
         sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = false;                                          \
@@ -144,6 +144,6 @@ const char* sgl_what(sgl_exception_t exception);
             }                                                                   \
         }                                                                       \
         --sgl_detail_exceptions_index;                                          \
-    }
+    } while (0);
 
 #endif // SGL_EXCEPTION_H_
