@@ -15,6 +15,7 @@
  * License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
+#include <stdint.h>
 #include <sgl/exception.h>
 
 ////////////////////////////////////////////////////////////
@@ -36,6 +37,28 @@ void sgl_throw(sgl_exception_t exception)
         --sgl_detail_exceptions_index;
     }
     longjmp(sgl_detail_buf_array[sgl_detail_exceptions_index], exception);
+}
+
+////////////////////////////////////////////////////////////
+// Exceptions inheritance emulation
+
+bool sgl_exception_inherits_from(sgl_exception_t exception,
+                                 sgl_exception_t from)
+{
+    static uint_fast16_t inheritance[] = {
+        1 << logic_error,
+        1 << domain_error | 1 << logic_error,
+        1 << invalid_argument | 1 << logic_error,
+        1 << length_error | 1 << logic_error,
+        1 << out_of_range | 1 << logic_error,
+        1 << runtime_error,
+        1 << range_error | 1 << runtime_error,
+        1 << overflow_error | 1 << runtime_error,
+        1 << underflow_error | 1 << runtime_error,
+        1 << bad_alloc
+    };
+
+    return inheritance[exception - 1] & (1 << from);
 }
 
 ////////////////////////////////////////////////////////////
