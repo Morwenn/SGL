@@ -40,8 +40,7 @@
  */
 typedef enum
 {
-    no_exception = 0,
-    logic_error,
+    logic_error = 1,
     domain_error,
     invalid_argument,
     length_error,
@@ -106,9 +105,8 @@ const char* sgl_what(sgl_exception_t exception);
         ++sgl_detail_exceptions_index;                                                                          \
         sgl_exception_t sgl_detail_exception_error = setjmp(sgl_detail_buf_array[sgl_detail_exceptions_index]); \
         sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = false;                                          \
-        switch (sgl_detail_exception_error)                                                                     \
-        {                                                                                                       \
-            case no_exception:
+        if (not sgl_detail_exception_error)                                                                     \
+        {
 
 /**
  * @def sgl_catch(exception)
@@ -116,10 +114,11 @@ const char* sgl_what(sgl_exception_t exception);
  * Catches an exception and execute the following bloc
  * of code if it corresponds to the thrown exceptions
  */
-#define sgl_catch(exception)                                                    \
-                break;                                                          \
-            case exception:                                                     \
-                sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = true;   \
+#define sgl_catch(exception)                                                \
+        }                                                                   \
+        else if (sgl_detail_exception_error == exception)                   \
+        {                                                                   \
+            sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = true;   \
 
 /**
  * @def sgl_endtry
@@ -128,24 +127,23 @@ const char* sgl_what(sgl_exception_t exception);
  * Prints the current exception and aborts with -1 if we are not
  * into a catch block.
  */
-#define sgl_endtry                                                                  \
-                break;                                                              \
-            default:                                                                \
-            {                                                                       \
-                if (sgl_detail_exceptions_index > 0)                                \
-                {                                                                   \
-                    --sgl_detail_exceptions_index;                                  \
-                    sgl_throw(sgl_detail_exception_error);                          \
-                }                                                                   \
-                else                                                                \
-                {                                                                   \
-                    printf("Terminate called after throwing an exception.\n");      \
-                    printf("  what(): %s\n", sgl_what(sgl_detail_exception_error)); \
-                    exit(-1);                                                       \
-                }                                                                   \
-            }                                                                       \
-        }                                                                           \
-        --sgl_detail_exceptions_index;                                              \
+#define sgl_endtry                                                              \
+        }                                                                       \
+        else                                                                    \
+        {                                                                       \
+            if (sgl_detail_exceptions_index > 0)                                \
+            {                                                                   \
+                --sgl_detail_exceptions_index;                                  \
+                sgl_throw(sgl_detail_exception_error);                          \
+            }                                                                   \
+            else                                                                \
+            {                                                                   \
+                printf("Terminate called after throwing an exception.\n");      \
+                printf("  what(): %s\n", sgl_what(sgl_detail_exception_error)); \
+                exit(-1);                                                       \
+            }                                                                   \
+        }                                                                       \
+        --sgl_detail_exceptions_index;                                          \
     }
 
 #endif // SGL_EXCEPTION_H_

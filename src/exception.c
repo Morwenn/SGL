@@ -61,7 +61,7 @@ const char* sgl_what(sgl_exception_t exception)
         return "unknown error";
     }
 
-    // There is no message for no_exception, hence
-    // the subtraction
+    // The error code 0 is reserved for when no exception
+    // occurs, therefore, we have to subtract 1
     return messages[exception - 1];
 }
