@@ -161,12 +161,32 @@ const char* sgl_what(sgl_exception_t exception);
 ////////////////////////////////////////////////////////////
 // Program termination utilities
 
+/**
+ * Type of the function called by sgl_terminate. While it does
+ * not appear in the typedef, termination handlers should be
+ * noreturn functions.
+ */
 typedef void (*sgl_terminate_handler)();
 
+/**
+ * @return the current termination handler.
+ */
 sgl_terminate_handler sgl_get_terminate();
 
+/**
+ * Sets a new termination handler. If \a new_handler is NULL,
+ * this functions sets back the default termination handler.
+ *
+ * @param new_handler New termination handler.
+ * @return the old termination handler.
+ */
 sgl_terminate_handler sgl_set_terminate(sgl_terminate_handler new_handler);
 
+/**
+ * Calls the current termination handler. The default one
+ * calls abort. This function is called when an exception
+ * is thrown and not caught.
+ */
 noreturn void sgl_terminate();
 
 #endif // SGL_EXCEPTION_H_
