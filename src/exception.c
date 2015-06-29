@@ -30,7 +30,7 @@ int sgl_detail_exceptions_index = -1;
 sgl_exception_t sgl_detail_current_exception;
 
 ////////////////////////////////////////////////////////////
-// Throwing function
+// Throwing functions
 
 void sgl_throw(sgl_exception_t exception)
 {
@@ -40,6 +40,11 @@ void sgl_throw(sgl_exception_t exception)
     }
     sgl_detail_current_exception = exception;
     longjmp(sgl_detail_buf_array[sgl_detail_exceptions_index], true);
+}
+
+noreturn void sgl_rethrow()
+{
+    sgl_throw(sgl_detail_current_exception);
 }
 
 ////////////////////////////////////////////////////////////

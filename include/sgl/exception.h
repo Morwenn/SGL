@@ -90,6 +90,11 @@ extern sgl_exception_t sgl_detail_current_exception;
 noreturn void sgl_throw(sgl_exception_t exception);
 
 /**
+ * Rethrows the current exception.
+ */
+noreturn void sgl_rethrow();
+
+/**
  * Returns whether an exception "inherits" from another
  * exception so that it is possible to catch several
  * related exceptions in a single catch block.
@@ -144,7 +149,7 @@ const char* sgl_what(sgl_exception_t exception);
             if (sgl_detail_exceptions_index > 0)                                    \
             {                                                                       \
                 --sgl_detail_exceptions_index;                                      \
-                sgl_throw(sgl_detail_current_exception);                            \
+                sgl_rethrow();                                                      \
             }                                                                       \
             else                                                                    \
             {                                                                       \
