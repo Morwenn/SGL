@@ -169,8 +169,4 @@ sgl_terminate_handler sgl_set_terminate(sgl_terminate_handler new_handler);
 
 noreturn void sgl_terminate();
 
-noreturn void sgl_default_terminate();
-
-extern sgl_terminate_handler sgl_detail_terminate_function;
-
 #endif // SGL_EXCEPTION_H_
