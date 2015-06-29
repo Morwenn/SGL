@@ -38,11 +38,18 @@ sgl_terminate_handler sgl_detail_terminate_function = sgl_default_terminate;
 
 void sgl_throw(sgl_exception_t exception)
 {
+    sgl_detail_current_exception = exception;
+
+    // Handle exceptions out of a try block
+    if (sgl_detail_exceptions_index == -1)
+    {
+        sgl_terminate();
+    }
+
     if (sgl_detail_in_catch_bloc[sgl_detail_exceptions_index])
     {
         --sgl_detail_exceptions_index;
     }
-    sgl_detail_current_exception = exception;
     longjmp(sgl_detail_buf_array[sgl_detail_exceptions_index], true);
 }
 
