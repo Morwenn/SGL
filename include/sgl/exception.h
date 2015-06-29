@@ -72,11 +72,14 @@ typedef enum
 // Global array of jmp_buf
 extern jmp_buf sgl_detail_buf_array[SGL_MAX_EXCEPTIONS];
 
-//Whether we are in an exception catch bloc
+// Whether we are in an exception catch bloc
 extern bool sgl_detail_in_catch_bloc[SGL_MAX_EXCEPTIONS];
 
 // Current exception index
 extern int sgl_detail_exceptions_index;
+
+// Current exception
+extern sgl_exception_t sgl_detail_current_exception;
 
 ////////////////////////////////////////////////////////////
 // Exception handling functions
@@ -108,12 +111,11 @@ const char* sgl_what(sgl_exception_t exception);
  *
  * Beginning of an exception try bloc.
  */
-#define sgl_try                                                                                                     \
-    do {                                                                                                            \
-        ++sgl_detail_exceptions_index;                                                                              \
-        sgl_exception_t sgl_detail_current_exception = setjmp(sgl_detail_buf_array[sgl_detail_exceptions_index]);   \
-        sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = false;                                              \
-        if (not sgl_detail_current_exception)                                                                       \
+#define sgl_try                                                             \
+    do {                                                                    \
+        ++sgl_detail_exceptions_index;                                      \
+        sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = false;      \
+        if (not setjmp(sgl_detail_buf_array[sgl_detail_exceptions_index]))  \
         {
 
 /**

@@ -27,6 +27,8 @@ bool sgl_detail_in_catch_bloc[SGL_MAX_EXCEPTIONS];
 
 int sgl_detail_exceptions_index = -1;
 
+sgl_exception_t sgl_detail_current_exception;
+
 ////////////////////////////////////////////////////////////
 // Throwing function
 
@@ -36,7 +38,8 @@ void sgl_throw(sgl_exception_t exception)
     {
         --sgl_detail_exceptions_index;
     }
-    longjmp(sgl_detail_buf_array[sgl_detail_exceptions_index], exception);
+    sgl_detail_current_exception = exception;
+    longjmp(sgl_detail_buf_array[sgl_detail_exceptions_index], true);
 }
 
 ////////////////////////////////////////////////////////////
