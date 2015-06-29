@@ -133,7 +133,8 @@ const char* sgl_what(sgl_exception_t exception);
         }                                                                               \
         else if (sgl_exception_inherits_from(sgl_detail_current_exception, exception))  \
         {                                                                               \
-            sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = true;
+            sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = true;               \
+            --sgl_detail_exceptions_index;
 
 /**
  * @def sgl_endtry
