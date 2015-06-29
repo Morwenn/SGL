@@ -17,7 +17,6 @@
  */
 #include <assert.h>
 #include <stdio.h>
-#include <sgl/exception.h>
 #include <sgl/iterator.h>
 #include <sgl/utility.h>
 #include <sgl/vector.h>
@@ -146,24 +145,6 @@ int main()
     sgl_push_back(vec2, 3);
     sgl_push_back(vec2, 4);
     sgl_push_back(vec2, 5);
-
-    sgl_try
-    {
-        sgl_try
-        {
-            sgl_throw(out_of_range);
-        }
-        sgl_catch (logic_error)
-        {
-            printf("\nCaught exception: logic error\n");
-        }
-        sgl_endtry
-    }
-    sgl_catch (out_of_range)
-    {
-        printf("\nCaught exception: out of range error\n");
-    }
-    sgl_endtry
 
     sgl_delete(vec1);
     sgl_delete(vec2);
