@@ -29,25 +29,28 @@ int main()
         }
         sgl_catch (logic_error)
         {
-            printf("Caught exception: logic error\n");
+            printf("Caught exception: %s\n", sgl_what(logic_error));
             sgl_rethrow();
         }
         sgl_endtry
     }
     sgl_catch (domain_error)
     {
-        printf("Caught exception: domain error\n");
+        // Should not be executed
+        printf("Caught exception: %s\n", sgl_what(domain_error));
     }
     sgl_catch (out_of_range)
     {
-        printf("Caught exception: out of range error\n");
+        printf("Caught exception: %s\n", sgl_what(out_of_range));
         sgl_try
         {
+            // Should leave the try-catch blocks and cause an error
             sgl_throw(bad_alloc);
         }
         sgl_catch(runtime_error)
         {
-            printf("Caught exception: runtime error\n");
+            // Should not be executed
+            printf("Caught exception: %s\n", sgl_what(runtime_error));
         }
         sgl_endtry
     }
