@@ -35,19 +35,24 @@
  * defined in the C++ <stdexcept> header and some other ones
  * from the C++ standard library. The mechanism cannot be
  * extended with user-defined types.
+ *
+ * The default sgl_exception is not meant to be thrown nor printed.
+ * It only exists so that it can be used to catch any exception in
+ * a catch block.
  */
 typedef enum
 {
-    logic_error = 1,
-    domain_error,
-    invalid_argument,
-    length_error,
-    out_of_range,
-    runtime_error,
-    range_error,
-    overflow_error,
-    underflow_error,
-    bad_alloc,
+    sgl_exception = -1,
+    sgl_logic_error,
+    sgl_domain_error,
+    sgl_invalid_argument,
+    sgl_length_error,
+    sgl_out_of_range,
+    sgl_runtime_error,
+    sgl_range_error,
+    sgl_overflow_error,
+    sgl_underflow_error,
+    sgl_bad_alloc,
     sgl_detail_exceptions_number
 } sgl_exception_t;
 

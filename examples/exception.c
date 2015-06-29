@@ -25,32 +25,35 @@ int main()
     {
         sgl_try
         {
-            sgl_throw(out_of_range);
+            sgl_throw(sgl_out_of_range);
         }
-        sgl_catch (logic_error)
+        sgl_catch (sgl_logic_error)
         {
-            printf("Caught exception: %s\n", sgl_what(logic_error));
+            printf("Caught exception: %s\n", sgl_what(sgl_logic_error));
             sgl_rethrow();
         }
         sgl_endtry
     }
-    sgl_catch (domain_error)
+    sgl_catch (sgl_domain_error)
     {
         // Should not be executed
-        printf("Caught exception: %s\n", sgl_what(domain_error));
+        printf("Caught exception: %s\n", sgl_what(sgl_domain_error));
     }
-    sgl_catch (out_of_range)
+    sgl_catch (sgl_out_of_range)
     {
-        printf("Caught exception: %s\n", sgl_what(out_of_range));
+        printf("Caught exception: %s\n", sgl_what(sgl_out_of_range));
         sgl_try
         {
-            // Should leave the try-catch blocks and cause an error
-            sgl_throw(bad_alloc);
+            sgl_throw(sgl_bad_alloc);
         }
-        sgl_catch(runtime_error)
+        sgl_catch(sgl_runtime_error)
         {
             // Should not be executed
-            printf("Caught exception: %s\n", sgl_what(runtime_error));
+            printf("Caught exception: %s\n", sgl_what(sgl_runtime_error));
+        }
+        sgl_catch(sgl_exception)
+        {
+            printf("Caught exception: %s\n", sgl_what(sgl_exception));
         }
         sgl_endtry
     }

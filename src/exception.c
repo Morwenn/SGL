@@ -36,6 +36,7 @@ sgl_exception_t sgl_detail_current_exception;
 
 void sgl_throw(sgl_exception_t exception)
 {
+    assert(exception != sgl_exception);
     sgl_detail_current_exception = exception;
 
     // Handle exceptions out of a try block
@@ -63,19 +64,24 @@ bool sgl_exception_inherits_from(sgl_exception_t exception,
                                  sgl_exception_t from)
 {
     static uint_fast16_t inheritance[] = {
-        1 << logic_error,
-        1 << domain_error | 1 << logic_error,
-        1 << invalid_argument | 1 << logic_error,
-        1 << length_error | 1 << logic_error,
-        1 << out_of_range | 1 << logic_error,
-        1 << runtime_error,
-        1 << range_error | 1 << runtime_error,
-        1 << overflow_error | 1 << runtime_error,
-        1 << underflow_error | 1 << runtime_error,
-        1 << bad_alloc
+        1 << sgl_logic_error,
+        1 << sgl_domain_error | 1 << sgl_logic_error,
+        1 << sgl_invalid_argument | 1 << sgl_logic_error,
+        1 << sgl_length_error | 1 << sgl_logic_error,
+        1 << sgl_out_of_range | 1 << sgl_logic_error,
+        1 << sgl_runtime_error,
+        1 << sgl_range_error | 1 << sgl_runtime_error,
+        1 << sgl_overflow_error | 1 << sgl_runtime_error,
+        1 << sgl_underflow_error | 1 << sgl_runtime_error,
+        1 << sgl_bad_alloc
     };
 
-    return inheritance[exception - 1] & (1 << from);
+    if (from == sgl_exception)
+    {
+        // Everything inherits from exception
+        return true;
+    }
+    return inheritance[exception] & (1 << from);
 }
 
 ////////////////////////////////////////////////////////////
@@ -96,14 +102,11 @@ const char* sgl_what(sgl_exception_t exception)
         "bad allocation"
     };
 
-    if (exception < 1 || exception >= sgl_detail_exceptions_number)
+    if (exception < 0 || exception >= sgl_detail_exceptions_number)
     {
         return "unknown error";
     }
-
-    // The error code 0 is reserved for when no exception
-    // occurs, therefore, we have to subtract 1
-    return messages[exception - 1];
+    return messages[exception];
 }
 
 ////////////////////////////////////////////////////////////
