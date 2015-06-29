@@ -16,6 +16,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sgl/exception.h>
 
 ////////////////////////////////////////////////////////////
@@ -28,6 +30,8 @@ bool sgl_detail_in_catch_bloc[SGL_MAX_EXCEPTIONS];
 int sgl_detail_exceptions_index = -1;
 
 sgl_exception_t sgl_detail_current_exception;
+
+sgl_terminate_handler sgl_detail_terminate_function = sgl_default_terminate;
 
 ////////////////////////////////////////////////////////////
 // Throwing functions
@@ -95,4 +99,35 @@ const char* sgl_what(sgl_exception_t exception)
     // The error code 0 is reserved for when no exception
     // occurs, therefore, we have to subtract 1
     return messages[exception - 1];
+}
+
+////////////////////////////////////////////////////////////
+// Program termination utilities
+
+sgl_terminate_handler sgl_get_terminate()
+{
+    return sgl_detail_terminate_function;
+}
+
+sgl_terminate_handler sgl_set_terminate(sgl_terminate_handler new_handler)
+{
+    sgl_terminate_handler old_handler = sgl_get_terminate();
+    if (new_handler == NULL)
+    {
+        new_handler = sgl_default_terminate;
+    }
+    sgl_detail_terminate_function = new_handler;
+    return old_handler;
+}
+
+noreturn void sgl_terminate()
+{
+    sgl_detail_terminate_function();
+}
+
+noreturn void sgl_default_terminate()
+{
+    printf("Terminate called after throwing an exception.\n");
+    printf("  what(): %s\n", sgl_what(sgl_detail_current_exception));
+    abort();
 }

@@ -22,8 +22,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sgl/detail/common.h>
 
 ////////////////////////////////////////////////////////////
@@ -143,23 +141,36 @@ const char* sgl_what(sgl_exception_t exception);
  * Prints the current exception and aborts with -1 if we are not
  * into a catch block.
  */
-#define sgl_endtry                                                                  \
-        }                                                                           \
-        else                                                                        \
-        {                                                                           \
-            if (sgl_detail_exceptions_index > 0)                                    \
-            {                                                                       \
-                --sgl_detail_exceptions_index;                                      \
-                sgl_rethrow();                                                      \
-            }                                                                       \
-            else                                                                    \
-            {                                                                       \
-                printf("Terminate called after throwing an exception.\n");          \
-                printf("  what(): %s\n", sgl_what(sgl_detail_current_exception));   \
-                exit(-1);                                                           \
-            }                                                                       \
-        }                                                                           \
-        --sgl_detail_exceptions_index;                                              \
+#define sgl_endtry                                  \
+        }                                           \
+        else                                        \
+        {                                           \
+            if (sgl_detail_exceptions_index > 0)    \
+            {                                       \
+                --sgl_detail_exceptions_index;      \
+                sgl_rethrow();                      \
+            }                                       \
+            else                                    \
+            {                                       \
+                sgl_terminate();                    \
+            }                                       \
+        }                                           \
+        --sgl_detail_exceptions_index;              \
     } while (0);
+
+////////////////////////////////////////////////////////////
+// Program termination utilities
+
+typedef void (*sgl_terminate_handler)();
+
+sgl_terminate_handler sgl_get_terminate();
+
+sgl_terminate_handler sgl_set_terminate(sgl_terminate_handler new_handler);
+
+noreturn void sgl_terminate();
+
+noreturn void sgl_default_terminate();
+
+extern sgl_terminate_handler sgl_detail_terminate_function;
 
 #endif // SGL_EXCEPTION_H_
