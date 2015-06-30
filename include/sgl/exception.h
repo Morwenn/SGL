@@ -28,7 +28,7 @@
 // Exceptions
 
 /**
- * @brief Basic exception type
+ * @brief Basic exception type.
  *
  * The exceptions must be integers to satisfy the longjmp
  * function. The names used here are those of the exceptions
@@ -75,9 +75,6 @@ typedef enum
 // Global array of jmp_buf
 extern jmp_buf sgl_detail_buf_array[SGL_MAX_EXCEPTIONS];
 
-// Whether we are in an exception catch bloc
-extern bool sgl_detail_in_catch_bloc[SGL_MAX_EXCEPTIONS];
-
 // Current exception index
 extern int sgl_detail_exceptions_index;
 
@@ -122,7 +119,6 @@ const char* sgl_what(sgl_exception_t exception);
 #define sgl_try                                                             \
     do {                                                                    \
         ++sgl_detail_exceptions_index;                                      \
-        sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = false;      \
         if (not setjmp(sgl_detail_buf_array[sgl_detail_exceptions_index]))  \
         {
 
@@ -136,7 +132,6 @@ const char* sgl_what(sgl_exception_t exception);
         }                                                                               \
         else if (sgl_exception_inherits_from(sgl_detail_current_exception, exception))  \
         {                                                                               \
-            sgl_detail_in_catch_bloc[sgl_detail_exceptions_index] = true;               \
             --sgl_detail_exceptions_index;
 
 /**
