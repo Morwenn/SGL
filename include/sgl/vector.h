@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sgl/collection.h>
+#include <sgl/exception.h>
 #include <sgl/detail/common.h>
 
 /**
@@ -177,8 +178,11 @@ void sgl_vector_reserve_##T(sgl_vector(T)* vector, size_t new_cap)              
     if (new_cap > sgl_capacity(vector))                                             \
     {                                                                               \
         vector->_capacity = new_cap;                                                \
-        vector->_data = realloc(vector->_data,                                      \
-                                     new_cap * sizeof(T));                          \
+        vector->_data = realloc(vector->_data, new_cap * sizeof(T));                \
+        if (not vector->_data)                                                      \
+        {                                                                           \
+            sgl_throw(sgl_bad_alloc);                                               \
+        }                                                                           \
     }                                                                               \
 }                                                                                   \
                                                                                     \
@@ -190,8 +194,11 @@ size_t sgl_vector_capacity_##T(const sgl_vector(T)* vector)                     
 void sgl_vector_shrink_to_fit_##T(sgl_vector(T)* vector)                            \
 {                                                                                   \
     vector->_capacity = sgl_size(vector);                                           \
-    vector->_data = realloc(vector->_data,                                          \
-                                 sgl_size(vector) * sizeof(T));                     \
+    vector->_data = realloc(vector->_data, sgl_size(vector) * sizeof(T));           \
+    if (not vector->_data)                                                          \
+    {                                                                               \
+        sgl_throw(sgl_bad_alloc);                                                   \
+    }                                                                               \
 }                                                                                   \
                                                                                     \
 void sgl_vector_clear_##T(sgl_vector(T)* vector)                                    \
@@ -337,10 +344,19 @@ const sgl_detail_vector_functions_##T sgl_detail_vector_funcs_##T = {           
 sgl_vector(T)* sgl_new_sgl_vector_##T()                                             \
 {                                                                                   \
     sgl_vector_##T* res = malloc(sizeof(sgl_vector(T)));                            \
+    if (not res)                                                                    \
+    {                                                                               \
+        sgl_throw(sgl_bad_alloc);                                                   \
+    }                                                                               \
     res->_functions = &sgl_detail_vector_funcs_##T;                                 \
     res->_capacity = 40;                                                            \
     res->_size = 0;                                                                 \
     res->_data = malloc(res->_capacity * sizeof(T));                                \
+    if (not res->_data)                                                             \
+    {                                                                               \
+        free(res);                                                                  \
+        sgl_throw(sgl_bad_alloc);                                                   \
+    }                                                                               \
     return res;                                                                     \
 }
 
