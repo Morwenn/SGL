@@ -19,8 +19,13 @@
 #ifndef SGL_IO_IOSTREAM_H_
 #define SGL_IO_IOSTREAM_H_
 
+#define __STDC_WANT_LIB_EXT2__ 1 // try to get getline
 #include <sgl/detail/common.h>
 #include <sgl/detail/map.h>
+#include <stdio.h>  // getchar, scanf, printf, fprintf, EOF, fgets
+#include <stdlib.h> // size_t, malloc, realloc, free
+#include <string.h> // memset, strcmp, strlen
+#include <stdint.h> // uintptr_t
 
 // Clears the data left over by scanf.
 static inline void _sgl_clear_stdin(void)
@@ -79,8 +84,7 @@ __attribute__((__unused__)) // avoid -Wunused
 #endif
 static int _sgl_malloc_getline(char **_x)
 {
-#if !defined(IOSTREAM_DISABLE_GETLINE) \
-   && (defined(__STDC_ALLOC_LIB__) /* C2x hyyype! */ \
+#if (defined(__STDC_ALLOC_LIB__) /* C2x hyyype! */ \
         || (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 200803L) || defined(_GNU_SOURCE) /* glibc */ \
         || defined(_WITH_GETLINE) /* BSD */ \
       )
@@ -330,7 +334,7 @@ do {                                                                            
     /* Null terminate the string. */                                                            \
     *_sgl_concat(_sgl_fmt_buf_p, __LINE__)++ = '\0';                                            \
     /* Now print it with printf. */                                                             \
-    printf(_sgl_concat(_sgl_fmt_buf,__LINE__),#__VA_ARGS__);                                    \
+    printf(_sgl_concat(_sgl_fmt_buf,__LINE__), __VA_ARGS__);                                    \
 } while (0)
 
 // void sgl_cerr(...);
@@ -347,7 +351,7 @@ do {                                                                            
     /* Null terminate the string. */                                                            \
     *_sgl_concat(_sgl_fmt_buf_p, __LINE__)++ = '\0';                                            \
     /* Now print it with fprintf. */                                                            \
-    fprintf(stderr, _sgl_concat(_sgl_fmt_buf,__LINE__),#__VA_ARGS__);                           \
+    fprintf(stderr, _sgl_concat(_sgl_fmt_buf,__LINE__), __VA_ARGS__);                           \
 } while (0)
 
 // To make sgl_cin work with strict aliasing.
@@ -377,7 +381,7 @@ do {                                                                            
     union _sgl_iostream_pun _sgl_concat(_x, __LINE__) = { ._p = &(x) };                 \
     /* Choose the correct format string. */                                             \
     int _sgl_concat(_tmp, __LINE__) = _Generic((x),                                     \
-        bool: _read_bool(_sgl_concat(_x, __LINE__)._b, extra /* boolalpha? */),         \
+        bool: _sgl_read_bool(_sgl_concat(_x, __LINE__)._b, extra /* boolalpha? */),     \
         char: scanf(" %c", _sgl_concat(_x, __LINE__)._c),                               \
         signed char: scanf("%hhi", _sgl_concat(_x, __LINE__)._hhi),                     \
         unsigned char: scanf("%hhu", _sgl_concat(_x, __LINE__)._hhu),                   \
@@ -393,8 +397,8 @@ do {                                                                            
         double: scanf("%lf", _sgl_concat(_x, __LINE__)._lf),                            \
         long double: scanf("%Lf", _sgl_concat(_x, __LINE__)._Lf),                       \
         /* uintptr_t hides the "cast to pointer from smaller size" warning */           \
-        char **: _malloc_getline((char **)((uintptr_t)(x))),                            \
-        char *: _length_getline((char *)((uintptr_t)(x)), extra /* bufsize */)          \
+        char **: _sgl_malloc_getline((char **)((uintptr_t)(x))),                        \
+        char *: _sgl_length_getline((char *)((uintptr_t)(x)), extra /* bufsize */)      \
     );                                                                                  \
     /* set the value to zero on errors like std::cin. */                                \
     if (_sgl_concat(_tmp, __LINE__) < 1) {                                              \
