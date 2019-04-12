@@ -450,7 +450,7 @@ void sgl_fill(void *restrict out, size_t count, size_t size, const void *restric
 {
     if (count == 0 || size == 0) return;
     uint8_t *first = out;
-    const uint8_t *input = out;
+    const uint8_t *input = in;
     if (size == 1) { // memset is almost always faster here
         memset(out, input[0], count);
         return;
